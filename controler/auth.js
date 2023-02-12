@@ -1,7 +1,7 @@
-const importedPool = require('../libraries/db')
 const uuid = require('uuid')
 const {validateEmail} = require('../helpers/validation');
 const {getUserByEmail, createUser} = require("../models/user")
+
 async function registeration(req,res) {
 
     const {
@@ -9,17 +9,22 @@ async function registeration(req,res) {
         email,
         password,
     } = req.body;
+    if(!Boolean(email)) {
+        res.send("Please Enter Email")
+        return;
+    }
 
-    const user = await getUserByEmail(email);
-        if(user) {
-            res.send("User Already Exist");
-            return;
-        }
         if(validateEmail(email)) {
+            const user = await getUserByEmail(email);
+            if(user) {
+                res.send("User Already Exist");
+                return;
+            }
             createUser(username,email);
             res.send("created")
         }
-        else res.send("Please enter email");
+        
+        else res.send("Please enter a valid email!");
     }
 
     
